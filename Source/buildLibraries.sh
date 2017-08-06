@@ -16,6 +16,7 @@ export SHARED_RESULT_ROOT_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/"
 export SHARED_RESULT_BINARY_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/bin"
 export SHARED_RESULT_LIBRARY_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/lib"
 export SHARED_RESULT_LIBRARY_STATIC_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/lib-static"
+export SHARED_RESULT_LICENSE_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/license"
 export SHARED_RESULT_INCLUDE_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/include"
 
 LIBRARIES_THAT_DONT_EXIST=()
@@ -55,6 +56,7 @@ function deleteOldAndCreateDirectory {
 deleteOldAndCreateDirectory "${WORKING_DIRECTORY}"
 deleteOldAndCreateDirectory "${SHARED_RESULT_ROOT_LOCATION}"
 deleteOldAndCreateDirectory "${SHARED_RESULT_LIBRARY_STATIC_LOCATION}"
+deleteOldAndCreateDirectory "${SHARED_RESULT_LICENSE_LOCATION}"
 
 for LIBRARY_TO_BUILD in ${LIBRARIES_THAT_DONT_EXIST[@]}
 do
