@@ -1,0 +1,21 @@
+
+ReceiptModule DEFINITIONS ::=
+BEGIN
+ 
+ReceiptAttribute ::= SEQUENCE {
+    type    INTEGER,
+    version INTEGER,
+    value   OCTET STRING
+}
+
+InAppAttribute ::= SEQUENCE {
+    type    INTEGER,
+    version INTEGER,
+    value   OCTET STRING
+}
+ 
+InAppReceipt ::= SET OF InAppAttribute
+ 
+Payload ::= SET OF ReceiptAttribute
+ 
+END
