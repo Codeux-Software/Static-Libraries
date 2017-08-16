@@ -124,9 +124,9 @@
 		4CF1E5AC1F373B5300C48857 /* der_encoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = der_encoder.c; path = Classes/der_encoder.c; sourceTree = "<group>"; };
 		4CF1E5AD1F373B5300C48857 /* constraints.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = constraints.c; path = Classes/constraints.c; sourceTree = "<group>"; };
 		4CF1E5AE1F373B5300C48857 /* per_support.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = per_support.c; path = Classes/per_support.c; sourceTree = "<group>"; };
-		4CF1E5B41F373B6700C48857 /* Payload.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Payload.txt; sourceTree = "<group>"; };
-		4CF1E5B61F373C0D00C48857 /* Build Configuration.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build Configuration.xcconfig"; sourceTree = "<group>"; };
-		4CF1E5B71F373C0D00C48857 /* Entitlements.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Entitlements.entitlements; sourceTree = "<group>"; };
+		4CF1E5B41F373B6700C48857 /* Payload.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = Payload.txt; path = Resources/Payload.txt; sourceTree = "<group>"; };
+		4CF1E5B61F373C0D00C48857 /* Build Configuration.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Build Configuration.xcconfig"; path = "Resources/Build Configuration/Build Configuration.xcconfig"; sourceTree = "<group>"; };
+		4CF1E5B71F373C0D00C48857 /* Entitlements.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Entitlements.entitlements; path = "Resources/Build Configuration/Entitlements.entitlements"; sourceTree = "<group>"; };
 		4CF9870B1F373955006C482B /* libasn1c.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libasn1c.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -147,7 +147,7 @@
 				4CF1E5B51F373C0D00C48857 /* Build Configuration */,
 				4CF1E5B41F373B6700C48857 /* Payload.txt */,
 			);
-			path = Resources;
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		4CF1E5B51F373C0D00C48857 /* Build Configuration */ = {
@@ -156,7 +156,7 @@
 				4CF1E5B61F373C0D00C48857 /* Build Configuration.xcconfig */,
 				4CF1E5B71F373C0D00C48857 /* Entitlements.entitlements */,
 			);
-			path = "Build Configuration";
+			name = "Build Configuration";
 			sourceTree = "<group>";
 		};
 		4CF987021F373955006C482B = {
