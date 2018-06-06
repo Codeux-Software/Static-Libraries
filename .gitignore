@@ -10,5 +10,6 @@
 .tmp
 Build Results/*
 Build-Results/*
+build
 xcuserdata
 *.xcworkspace
