@@ -10,7 +10,7 @@ export LIBRARY_OTR_VERSION="4.1.1"
 export LIBRARIES_TO_BUILD="libgpg-error libgcrypt libotr libressl"
 
 export CURRENT_DIRECTORY=`pwd`
-export ROOT_DIRECTORY="${CURRENT_DIRECTORY}/Build-Results/"
+export ROOT_DIRECTORY="/tmp/static-library-build-results/"
 
 export SHARED_RESULT_ROOT_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/"
 export SHARED_RESULT_BINARY_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/bin"
@@ -57,6 +57,8 @@ deleteOldAndCreateDirectory "${WORKING_DIRECTORY}"
 deleteOldAndCreateDirectory "${SHARED_RESULT_ROOT_LOCATION}"
 deleteOldAndCreateDirectory "${SHARED_RESULT_LIBRARY_STATIC_LOCATION}"
 deleteOldAndCreateDirectory "${SHARED_RESULT_LICENSE_LOCATION}"
+
+open "${ROOT_DIRECTORY}"
 
 for LIBRARY_TO_BUILD in ${LIBRARIES_THAT_DONT_EXIST[@]}
 do
