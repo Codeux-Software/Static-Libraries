@@ -12,21 +12,49 @@
 	<key>files2</key>
 	<dict>
 		<key>Headers/Growl.h</key>
-		<data>
-		j9Ob2u9aIsHa7g0mIrcn/eowg/U=
-		</data>
+		<dict>
+			<key>hash</key>
+			<data>
+			j9Ob2u9aIsHa7g0mIrcn/eowg/U=
+			</data>
+			<key>hash2</key>
+			<data>
+			jqe3SUtaoUqHpF2NFvrab8xw8xUjwTCtmVc+nDCE8HM=
+			</data>
+		</dict>
 		<key>Headers/GrowlApplicationBridge.h</key>
-		<data>
-		EnGmx27UHXu/cw04qVrVgF74lt8=
-		</data>
+		<dict>
+			<key>hash</key>
+			<data>
+			EnGmx27UHXu/cw04qVrVgF74lt8=
+			</data>
+			<key>hash2</key>
+			<data>
+			qFqosCIMJfp1AgwJig0zFzxPACK5XlZmlQlD/zyRqAg=
+			</data>
+		</dict>
 		<key>Headers/GrowlDefines.h</key>
-		<data>
-		lEpJMIumoTSF3icoXL/GM/1lEzE=
-		</data>
+		<dict>
+			<key>hash</key>
+			<data>
+			lEpJMIumoTSF3icoXL/GM/1lEzE=
+			</data>
+			<key>hash2</key>
+			<data>
+			/E21AqunB5/CaYp0elsOBUP61BzXUAkLveGB9LC6Jfo=
+			</data>
+		</dict>
 		<key>Resources/Info.plist</key>
-		<data>
-		VZb3f8My4te/5JwcjfvotgCXTAs=
-		</data>
+		<dict>
+			<key>hash</key>
+			<data>
+			VZb3f8My4te/5JwcjfvotgCXTAs=
+			</data>
+			<key>hash2</key>
+			<data>
+			odJVaVE9C8qEG+SuMscrQokH/dHROmtGcocWsrGpIZw=
+			</data>
+		</dict>
 	</dict>
 	<key>rules</key>
 	<dict>
@@ -45,6 +73,11 @@
 			<true/>
 			<key>weight</key>
 			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
 		</dict>
 		<key>^version.plist$</key>
 		<true/>
@@ -104,6 +137,11 @@
 			<true/>
 			<key>weight</key>
 			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
 		</dict>
 		<key>^[^/]+$</key>
 		<dict>
