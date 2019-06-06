@@ -1,5 +1,5 @@
 /* gpg-error.h or gpgrt.h - Common code for GnuPG and others.    -*- c -*-
- * Copyright (C) 2001-2018 g10 Code GmbH
+ * Copyright (C) 2001-2019 g10 Code GmbH
  *
  * This file is part of libgpg-error (aka libgpgrt).
  *
@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  *
  * Do not edit.  Generated from gpg-error.h.in for:
-                 x86_64-apple-darwin17.5.0
+                 x86_64-apple-darwin19.0.0
  */
 
 /* The GnuPG project consists of many components.  Error codes are
@@ -66,12 +66,12 @@
 #include <stdarg.h>
 
 /* The version string of this header. */
-#define GPG_ERROR_VERSION "1.31"
-#define GPGRT_VERSION     "1.31"
+#define GPG_ERROR_VERSION "1.36"
+#define GPGRT_VERSION     "1.36"
 
 /* The version number of this header. */
-#define GPG_ERROR_VERSION_NUMBER 0x011f00
-#define GPGRT_VERSION_NUMBER     0x011f00
+#define GPG_ERROR_VERSION_NUMBER 0x012400
+#define GPGRT_VERSION_NUMBER     0x012400
 
 
 #ifdef __GNUC__
@@ -432,6 +432,8 @@ typedef enum
     GPG_ERR_ALREADY_FETCHED = 311,
     GPG_ERR_TRY_LATER = 312,
     GPG_ERR_WRONG_NAME = 313,
+    GPG_ERR_NO_AUTH = 314,
+    GPG_ERR_BAD_AUTH = 315,
     GPG_ERR_SYSTEM_BUG = 666,
     GPG_ERR_DNS_UNKNOWN = 711,
     GPG_ERR_DNS_SECTION = 712,
@@ -743,7 +745,7 @@ typedef unsigned int gpg_error_t;
 
 /* The noreturn attribute.  */
 #if _GPG_ERR_GCC_VERSION >= 20500
-# define GPGRT_ATTR_NORETURN   __attribute__ ((noreturn))
+# define GPGRT_ATTR_NORETURN   __attribute__ ((__noreturn__))
 #else
 # define GPGRT_ATTR_NORETURN
 #endif
@@ -753,12 +755,12 @@ typedef unsigned int gpg_error_t;
 # define GPGRT_ATTR_PRINTF(f, a) \
                     __attribute__ ((format(__gnu_printf__,f,a)))
 # define GPGRT_ATTR_NR_PRINTF(f, a) \
-                    __attribute__ ((noreturn, format(__gnu_printf__,f,a)))
+                    __attribute__ ((__noreturn__, format(__gnu_printf__,f,a)))
 #elif _GPG_ERR_GCC_VERSION >= 20500
 # define GPGRT_ATTR_PRINTF(f, a) \
                     __attribute__ ((format(printf,f,a)))
 # define GPGRT_ATTR_NR_PRINTF(f, a) \
-                    __attribute__ ((noreturn, format(printf,f,a)))
+                    __attribute__ ((__noreturn__, format(printf,f,a)))
 #else
 # define GPGRT_ATTR_PRINTF(f, a)
 # define GPGRT_ATTR_NR_PRINTF(f, a)
@@ -888,6 +890,12 @@ void gpgrt_get_syscall_clamp (void (**r_pre)(void), void (**r_post)(void));
 
 /* Register a custom malloc/realloc/free function.  */
 void gpgrt_set_alloc_func  (void *(*f)(void *a, size_t n));
+
+/* Register an emergency cleanup handler.  */
+void gpgrt_add_emergency_cleanup (void (*f)(void));
+
+/* Wrapper around abort to make sure emergency cleanups are run.  */
+void gpgrt_abort (void) GPGRT_ATTR_NORETURN;
 
 
 
@@ -1231,6 +1239,11 @@ typedef struct _gpgrt_poll_s gpgrt_poll_t;
 typedef struct _gpgrt_poll_s es_poll_t;
 #endif
 
+/* The type of the string filter function as used by fprintf_sf et al.  */
+typedef char *(*gpgrt_string_filter_t) (const char *s, int n, void *opaque);
+
+
+
 gpgrt_stream_t gpgrt_fopen (const char *_GPGRT__RESTRICT path,
                             const char *_GPGRT__RESTRICT mode);
 gpgrt_stream_t gpgrt_mopen (void *_GPGRT__RESTRICT data,
@@ -1299,6 +1312,7 @@ int _gpgrt_pending_unlocked (gpgrt_stream_t stream); /* (private) */
 int gpgrt_fflush (gpgrt_stream_t stream);
 int gpgrt_fseek (gpgrt_stream_t stream, long int offset, int whence);
 int gpgrt_fseeko (gpgrt_stream_t stream, gpgrt_off_t offset, int whence);
+int gpgrt_ftruncate (gpgrt_stream_t stream, gpgrt_off_t length);
 long int gpgrt_ftell (gpgrt_stream_t stream);
 gpgrt_off_t gpgrt_ftello (gpgrt_stream_t stream);
 void gpgrt_rewind (gpgrt_stream_t stream);
@@ -1345,8 +1359,8 @@ int gpgrt_write_hexstring (gpgrt_stream_t _GPGRT__RESTRICT stream,
 
 size_t gpgrt_fread (void *_GPGRT__RESTRICT ptr, size_t size, size_t nitems,
                     gpgrt_stream_t _GPGRT__RESTRICT stream);
-size_t gpgrt_fwrite (const void *_GPGRT__RESTRICT ptr, size_t size, size_t memb,
-                     gpgrt_stream_t _GPGRT__RESTRICT stream);
+size_t gpgrt_fwrite (const void *_GPGRT__RESTRICT ptr, size_t size,
+                     size_t nitems, gpgrt_stream_t _GPGRT__RESTRICT stream);
 
 char *gpgrt_fgets (char *_GPGRT__RESTRICT s, int n,
                    gpgrt_stream_t _GPGRT__RESTRICT stream);
@@ -1368,6 +1382,15 @@ int gpgrt_fprintf (gpgrt_stream_t _GPGRT__RESTRICT stream,
 int gpgrt_fprintf_unlocked (gpgrt_stream_t _GPGRT__RESTRICT stream,
                             const char *_GPGRT__RESTRICT format, ...)
                             GPGRT_ATTR_PRINTF(2,3);
+
+int gpgrt_fprintf_sf (gpgrt_stream_t _GPGRT__RESTRICT stream,
+                      gpgrt_string_filter_t sf, void *sfvalue,
+                      const char *_GPGRT__RESTRICT format,
+                      ...) GPGRT_ATTR_PRINTF(4,5);
+int gpgrt_fprintf_sf_unlocked (gpgrt_stream_t _GPGRT__RESTRICT stream,
+                               gpgrt_string_filter_t sf, void *sfvalue,
+                               const char *_GPGRT__RESTRICT format,
+                               ...) GPGRT_ATTR_PRINTF(4,5);
 
 int gpgrt_printf (const char *_GPGRT__RESTRICT format, ...)
                   GPGRT_ATTR_PRINTF(1,2);
@@ -1455,6 +1478,7 @@ int gpgrt_vsnprintf (char *buf,size_t bufsize,
 # define es_fflush            gpgrt_fflush
 # define es_fseek             gpgrt_fseek
 # define es_fseeko            gpgrt_fseeko
+# define es_ftruncate         gpgrt_ftruncate
 # define es_ftell             gpgrt_ftell
 # define es_ftello            gpgrt_ftello
 # define es_rewind            gpgrt_rewind
@@ -1857,6 +1881,15 @@ const char *gpgrt_strusage (int level);
 void gpgrt_set_strusage (const char *(*f)(int));
 void gpgrt_set_usage_outfnc (int (*f)(int, const char *));
 void gpgrt_set_fixed_string_mapper (const char *(*f)(const char*));
+
+
+/*
+ * Various helper functions
+ */
+
+/* Compare arbitrary version strings.  For the standard m.n.o version
+ * numbering scheme a LEVEL of 3 is suitable; see the manual.  */
+int gpgrt_cmp_version (const char *a, const char *b, int level);
 
 
 
