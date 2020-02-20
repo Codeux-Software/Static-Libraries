@@ -19,6 +19,8 @@ cd "./libressl-source"
 --disable-shared \
 --prefix="${SHARED_RESULT_ROOT_LOCATION}"
 
+read -p "Press enter to continue"
+
 make
 make install
 
