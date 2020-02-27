@@ -9,15 +9,15 @@ export LIBRARY_OTR_VERSION="4.1.1"
 
 export LIBRARIES_TO_BUILD="libgpg-error libgcrypt libotr libressl"
 
-export CURRENT_DIRECTORY=`pwd`
-export ROOT_DIRECTORY="/tmp/static-library-build-results/"
+export CURRENT_DIRECTORY=$(cd `dirname $0` && pwd)
+export ROOT_DIRECTORY="/tmp/static-library-build-results"
 
-export SHARED_RESULT_ROOT_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/"
-export SHARED_RESULT_BINARY_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/bin"
-export SHARED_RESULT_LIBRARY_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/lib"
-export SHARED_RESULT_LIBRARY_STATIC_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/lib-static"
-export SHARED_RESULT_LICENSE_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/license"
-export SHARED_RESULT_INCLUDE_LOCATION="${ROOT_DIRECTORY}Library-Build-Results/include"
+export SHARED_RESULT_ROOT_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/"
+export SHARED_RESULT_BINARY_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/bin"
+export SHARED_RESULT_LIBRARY_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/lib"
+export SHARED_RESULT_LIBRARY_STATIC_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/lib-static"
+export SHARED_RESULT_LICENSE_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/license"
+export SHARED_RESULT_INCLUDE_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/include"
 
 LIBRARIES_THAT_DONT_EXIST=()
 
@@ -34,7 +34,7 @@ if [ ${#LIBRARIES_THAT_DONT_EXIST[@]} == 0 ]; then
 	exit 0;
 fi 
 
-export WORKING_DIRECTORY="${ROOT_DIRECTORY}Library-Build-Source/"
+export WORKING_DIRECTORY="${ROOT_DIRECTORY}/Library-Build-Source/"
 
 export PATH="${PATH}:${SHARED_RESULT_BINARY_LOCATION}"
 
@@ -53,6 +53,17 @@ function deleteOldAndCreateDirectory {
 	mkdir -p "$1"
 }
 
+function applyPatchesToLibrary {
+	PATCH_DIRECTORY="${CURRENT_DIRECTORY}/Library Script Patches/$1"
+
+	find "${PATCH_DIRECTORY}" -name "*.patch" -print0 | while read -d $'\0' file
+	do
+		patch -p0 --ignore-whitespace < "${file}"
+	done
+}
+
+export -f applyPatchesToLibrary
+
 deleteOldAndCreateDirectory "${WORKING_DIRECTORY}"
 deleteOldAndCreateDirectory "${SHARED_RESULT_ROOT_LOCATION}"
 deleteOldAndCreateDirectory "${SHARED_RESULT_LIBRARY_STATIC_LOCATION}"
@@ -68,5 +79,5 @@ do
 
 	deleteOldAndCreateDirectory "${LIBRARY_WORKING_DIRECTORY_LOCATION}"
 
-	"./Source/Library Scripts/build_${LIBRARY_TO_BUILD}.sh"
+	"${CURRENT_DIRECTORY}/Library Scripts/build_${LIBRARY_TO_BUILD}.sh"
 done

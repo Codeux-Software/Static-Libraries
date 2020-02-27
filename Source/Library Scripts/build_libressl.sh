@@ -12,14 +12,14 @@ mv "./libressl-${LIBRARY_LIBRESSL_VERSION}" "./libressl-source"
 
 cd "./libressl-source"
 
+applyPatchesToLibrary "libressl"
+
 ./configure \
 --enable-static \
 --disable-dependency-tracking \
 --disable-silent-rules \
 --disable-shared \
 --prefix="${SHARED_RESULT_ROOT_LOCATION}"
-
-read -p "Press enter to continue"
 
 make
 make install

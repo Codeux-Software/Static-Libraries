@@ -12,6 +12,8 @@ mv "./libgcrypt-${LIBRARY_GCRYPT_VERSION}" "./libgcrypt-source"
 
 cd "./libgcrypt-source"
 
+applyPatchesToLibrary "libgcrypt"
+
 ./configure \
 --enable-static \
 --disable-asm \

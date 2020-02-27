@@ -12,6 +12,8 @@ mv "./libgpg-error-${LIBRARY_GPG_ERROR_VERSION}" "./libgpg-error-source"
 
 cd "./libgpg-error-source"
 
+applyPatchesToLibrary "libgpg-error"
+
 ./configure \
 --enable-static \
 --disable-dependency-tracking \

@@ -12,6 +12,8 @@ mv "./libotr-${LIBRARY_OTR_VERSION}" "./libotr-source"
 
 cd "./libotr-source"
 
+applyPatchesToLibrary "libotr"
+
 ./configure \
 --enable-static \
 --disable-dependency-tracking \
