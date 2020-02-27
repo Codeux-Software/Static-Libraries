@@ -1,0 +1,31 @@
+--- configure	2019-10-15 15:31:05.000000000 -0400
++++ configure	2020-02-27 00:29:59.000000000 -0500
+@@ -13237,17 +13237,17 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_getentropy" >&5
+ $as_echo "$ac_cv_func_getentropy" >&6; }
+ 
+-for ac_func in timingsafe_bcmp timingsafe_memcmp
+-do :
+-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+-ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+-  cat >>confdefs.h <<_ACEOF
+-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+-_ACEOF
+-
+-fi
+-done
++#  for ac_func in timingsafe_bcmp timingsafe_memcmp
++#  do :
++#    as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
++#  ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
++#  if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
++#    cat >>confdefs.h <<_ACEOF
++#  #define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
++#  _ACEOF
++#  
++#  fi
++#  done
+ 
+  if test "x$ac_cv_func_arc4random" = xyes; then
+   HAVE_ARC4RANDOM_TRUE=
