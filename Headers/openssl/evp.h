@@ -1,4 +1,4 @@
-/* $OpenBSD: evp.h,v 1.77 2019/09/09 18:06:25 jsing Exp $ */
+/* $OpenBSD: evp.h,v 1.79 2020/04/27 19:31:02 tb Exp $ */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -99,6 +99,7 @@
 
 #define EVP_PKEY_NONE	NID_undef
 #define EVP_PKEY_RSA	NID_rsaEncryption
+#define EVP_PKEY_RSA_PSS NID_rsassaPss
 #define EVP_PKEY_RSA2	NID_rsa
 #define EVP_PKEY_DSA	NID_dsa
 #define EVP_PKEY_DSA1	NID_dsa_2
@@ -1506,6 +1507,7 @@ void ERR_load_EVP_strings(void);
 #define EVP_R_INPUT_NOT_INITIALIZED			 111
 #define EVP_R_INVALID_DIGEST				 152
 #define EVP_R_INVALID_FIPS_MODE				 168
+#define EVP_R_INVALID_IV_LENGTH				 194
 #define EVP_R_INVALID_KEY_LENGTH			 130
 #define EVP_R_INVALID_OPERATION				 148
 #define EVP_R_IV_TOO_LARGE				 102

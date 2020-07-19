@@ -1,6 +1,6 @@
 --- configure	2019-10-15 15:31:05.000000000 -0400
 +++ configure	2020-02-27 00:29:59.000000000 -0500
-@@ -13237,17 +13237,17 @@
+@@ -13270,17 +13270,17 @@
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_getentropy" >&5
  $as_echo "$ac_cv_func_getentropy" >&6; }
  
