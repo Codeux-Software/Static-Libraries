@@ -382,6 +382,7 @@
 			baseConfigurationReference = 4CF1E5B61F373C0D00C48857 /* Build Configuration.xcconfig */;
 			buildSettings = {
 				DEAD_CODE_STRIPPING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 			};
 			name = Debug;
 		};
@@ -390,6 +391,7 @@
 			baseConfigurationReference = 4CF1E5B61F373C0D00C48857 /* Build Configuration.xcconfig */;
 			buildSettings = {
 				DEAD_CODE_STRIPPING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 			};
 			name = Release;
 		};
