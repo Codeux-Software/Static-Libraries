@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  *
  * Do not edit.  Generated from gpg-error.h.in for:
-                 x86_64-apple-darwin20.1.0
+                 x86_64-apple-darwin20.5.0
  */
 
 /* The GnuPG project consists of many components.  Error codes are
@@ -66,12 +66,12 @@
 #include <stdarg.h>
 
 /* The version string of this header. */
-#define GPG_ERROR_VERSION "1.39"
-#define GPGRT_VERSION     "1.39"
+#define GPG_ERROR_VERSION "1.42"
+#define GPGRT_VERSION     "1.42"
 
 /* The version number of this header. */
-#define GPG_ERROR_VERSION_NUMBER 0x012700
-#define GPGRT_VERSION_NUMBER     0x012700
+#define GPG_ERROR_VERSION_NUMBER 0x012a00
+#define GPGRT_VERSION_NUMBER     0x012a00
 
 
 #ifdef __GNUC__
@@ -122,6 +122,7 @@ typedef enum
     GPG_ERR_SOURCE_KLEO = 13,
     GPG_ERR_SOURCE_G13 = 14,
     GPG_ERR_SOURCE_ASSUAN = 15,
+    GPG_ERR_SOURCE_TPM2D = 16,
     GPG_ERR_SOURCE_TLS = 17,
     GPG_ERR_SOURCE_ANY = 31,
     GPG_ERR_SOURCE_USER_1 = 32,
@@ -1099,6 +1100,9 @@ gpg_err_code_t gpgrt_chdir (const char *name);
 
 /* Return the current WD as a malloced string.  */
 char *gpgrt_getcwd (void);
+
+/* A wrapper around access to handle UTF-8 on Windows.  */
+gpg_err_code_t gpgrt_access (const char *fname, int mode);
 
 
 
