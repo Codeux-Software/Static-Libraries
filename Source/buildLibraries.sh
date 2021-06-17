@@ -1,49 +1,29 @@
 #!/bin/bash
 
-export MACOSX_DEPLOYMENT_TARGET="10.12"
+REBUILD=false
 
-export LIBRARY_LIBRESSL_VERSION="3.3.3";
+export ARCHES=(x86_64 arm64)
+export BUILDJOBS=$((  $(sysctl -n hw.ncpu) + 1))
+export MACOSX_DEPLOYMENT_TARGET="10.12"
+export PLATFORM_BUILD_SDK_ROOT_LOCATION=$(xcrun -sdk macosx --show-sdk-path)
+
+export LIBRARY_LIBRESSL_VERSION="3.3.3"
 export LIBRARY_GPG_ERROR_VERSION="1.42"
 export LIBRARY_GCRYPT_VERSION="1.9.3"
 export LIBRARY_OTR_VERSION="4.1.1"
 
-export LIBRARIES_TO_BUILD="libgpg-error libgcrypt libotr libressl"
+export LIBRARIES_TO_BUILD=(libgpg-error libgcrypt libotr libressl)
 
 export CURRENT_DIRECTORY=$(cd `dirname $0` && pwd)
-export ROOT_DIRECTORY="/tmp/static-library-build-results"
 
-export SHARED_RESULT_ROOT_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/"
-export SHARED_RESULT_BINARY_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/bin"
-export SHARED_RESULT_LIBRARY_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/lib"
-export SHARED_RESULT_LIBRARY_STATIC_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/lib-static"
-export SHARED_RESULT_LICENSE_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/license"
-export SHARED_RESULT_INCLUDE_LOCATION="${ROOT_DIRECTORY}/Library-Build-Results/include"
+export BUILDROOT_DIRECTORY="/tmp/static-library-build-results"
+export PREFIX_DIRECTORY="${BUILDROOT_DIRECTORY}/Library-Build-Results"
+export WORKING_DIRECTORY="${BUILDROOT_DIRECTORY}/Library-Build-Source"
+export STATICLIB_OUTPUT_DIR="${BUILDROOT_DIRECTORY}/lib-static"
+export HEADER_OUTPUT_DIR="${BUILDROOT_DIRECTORY}/includes"
+export LICENSE_OUTPUT_DIR="${BUILDROOT_DIRECTORY}/licenses"
 
-LIBRARIES_THAT_DONT_EXIST=()
-
-for LIBRARY_TO_BUILD in ${LIBRARIES_TO_BUILD[@]}
-do
-	if [ ! -f "${SHARED_RESULT_LIBRARY_STATIC_LOCATION}/${LIBRARY_TO_BUILD}.a" ]; then
-		LIBRARIES_THAT_DONT_EXIST+=("${LIBRARY_TO_BUILD}")
-	fi
-done
-
-if [ ${#LIBRARIES_THAT_DONT_EXIST[@]} == 0 ]; then
-	echo "There is nothing to build..."
-	
-	exit 0;
-fi 
-
-export WORKING_DIRECTORY="${ROOT_DIRECTORY}/Library-Build-Source/"
-
-export PATH="${PATH}:${SHARED_RESULT_BINARY_LOCATION}"
-
-export PLATFORM_BUILD_SDK_ROOT_LOCATION=$(xcrun -sdk macosx --show-sdk-path)
-
-export CC="clang"
-export LDFLAGS="-L${SHARED_RESULT_LIBRARY_LOCATION}"
-export CFLAGS=" -arch x86_64 -isysroot ${PLATFORM_BUILD_SDK_ROOT_LOCATION} -I${SHARED_RESULT_INCLUDE_LOCATION}"
-export CPPFLAGS=" -arch x86_64 -isysroot ${PLATFORM_BUILD_SDK_ROOT_LOCATION} -I${SHARED_RESULT_INCLUDE_LOCATION}"
+STATICLIB_OUTPUT_DIR_UNIVERSAL="${STATICLIB_OUTPUT_DIR}/universal"
 
 function deleteOldAndCreateDirectory {
 	if [ -d "$1" ]; then
@@ -64,20 +44,96 @@ function applyPatchesToLibrary {
 
 export -f applyPatchesToLibrary
 
-deleteOldAndCreateDirectory "${WORKING_DIRECTORY}"
-deleteOldAndCreateDirectory "${SHARED_RESULT_ROOT_LOCATION}"
-deleteOldAndCreateDirectory "${SHARED_RESULT_LIBRARY_STATIC_LOCATION}"
-deleteOldAndCreateDirectory "${SHARED_RESULT_LICENSE_LOCATION}"
+STDPATH=${PATH} # save the path as we will be adding to it later
 
-open "${ROOT_DIRECTORY}"
+if [ "$REBUILD" = true ]; then 
+	deleteOldAndCreateDirectory "${STATICLIB_OUTPUT_DIR}"
+	deleteOldAndCreateDirectory "${HEADER_OUTPUT_DIR}"
+	deleteOldAndCreateDirectory "${LICENSE_OUTPUT_DIR}"
+fi
 
-for LIBRARY_TO_BUILD in ${LIBRARIES_THAT_DONT_EXIST[@]}
-do
-	export LIBRARY_WORKING_DIRECTORY_LOCATION="${WORKING_DIRECTORY}${LIBRARY_TO_BUILD}/"
+for ARCH in ${ARCHES[@]}; do
 
-	export COMMAND_MODE=unix2003
+	export PREFIX_DIRECTORY_ARCH="${PREFIX_DIRECTORY}/$ARCH"
+	export WORKING_DIRECTORY_ARCH="${BUILDROOT_DIRECTORY}/Library-Build-Source/${ARCH}"
+	export STATICLIB_OUTPUT_DIR_ARCH="${STATICLIB_OUTPUT_DIR}/${ARCH}"
+	export HEADER_OUTPUT_DIR_ARCH="${HEADER_OUTPUT_DIR}/${ARCH}"
+	export LICENSE_OUTPUT_DIR_ARCH="${LICENSE_OUTPUT_DIR}/${ARCH}"
 
-	deleteOldAndCreateDirectory "${LIBRARY_WORKING_DIRECTORY_LOCATION}"
+	# these dirs have the final build products for this arch, we need to keep it around
+	mkdir -p "${STATICLIB_OUTPUT_DIR_ARCH}"
+	mkdir -p "${HEADER_OUTPUT_DIR_ARCH}"
+	mkdir -p "${LICENSE_OUTPUT_DIR_ARCH}"
 
-	"${CURRENT_DIRECTORY}/Library Scripts/build_${LIBRARY_TO_BUILD}.sh"
+	LIBRARIES_THAT_DONT_EXIST=()
+	for LIBRARY_TO_BUILD in ${LIBRARIES_TO_BUILD[@]}
+	do
+		if [ ${LIBRARY_TO_BUILD} = "libressl" ]; then
+			if [ ! -f "${STATICLIB_OUTPUT_DIR_ARCH}/libcrypto.a" ] || [ ! -f "${STATICLIB_OUTPUT_DIR_ARCH}/libssl.a" ] || [ ! -f "${STATICLIB_OUTPUT_DIR_ARCH}/libtls.a" ]; then
+			LIBRARIES_THAT_DONT_EXIST+=("${LIBRARY_TO_BUILD}")
+		fi
+		elif [ ! -f "${STATICLIB_OUTPUT_DIR_ARCH}/${LIBRARY_TO_BUILD}.a" ]; then
+			LIBRARIES_THAT_DONT_EXIST+=("${LIBRARY_TO_BUILD}")
+		fi
+	done
+
+	if [ ${#LIBRARIES_THAT_DONT_EXIST[@]} == 0 ]; then
+		echo "Everything has previously been built for $ARCH..."
+		continue;
+	fi
+
+
+	deleteOldAndCreateDirectory "${PREFIX_DIRECTORY_ARCH}"
+	deleteOldAndCreateDirectory "${WORKING_DIRECTORY_ARCH}"
+
+	# open "${ROOT_DIRECTORY}"
+
+	for LIBRARY_TO_BUILD in ${LIBRARIES_THAT_DONT_EXIST[@]}
+	do
+		export PATH="${STDPATH}:${PREFIX_DIRECTORY_ARCH}/bin"
+
+		export LIBRARY_WORKING_DIRECTORY_LOCATION="${WORKING_DIRECTORY_ARCH}/${LIBRARY_TO_BUILD}/"
+
+		export COMMAND_MODE=unix2003
+
+		deleteOldAndCreateDirectory "${LIBRARY_WORKING_DIRECTORY_LOCATION}"
+
+		export ARCH
+
+		"${CURRENT_DIRECTORY}/Library Scripts/build_${LIBRARY_TO_BUILD}.sh"
+	done
+
+	cp -a "${PREFIX_DIRECTORY_ARCH}/include"/* ${HEADER_OUTPUT_DIR_ARCH}
 done
+
+if [ ${#ARCHES[@]} -lt "2" ]; then
+	echo "Libraries have been built for one architecture: ${ARCHES[*]}"
+	echo "Build products are in ${STATICLIB_OUTPUT_DIR_ARCH}."
+	exit 0
+fi
+
+# combine the libs
+if [ "$REBUILD" = true ]; then
+	deleteOldAndCreateDirectory "${STATICLIB_OUTPUT_DIR_UNIVERSAL}"
+else
+	mkdir -p "${STATICLIB_OUTPUT_DIR_UNIVERSAL}"
+fi
+
+LIBFILE_NAMES=("${LIBRARIES_TO_BUILD[@]//libressl/libcrypto libssl libtls}")
+
+for LIBRARY_TO_BUILD in ${LIBFILE_NAMES[@]}
+do
+	echo $LIBRARY_TO_BUILD
+	if [ ! -f "${STATICLIB_OUTPUT_DIR_UNIVERSAL}/${LIBRARY_TO_BUILD}.a" ]; then
+		LIBS=""
+		for ARCH in ${ARCHES[@]}; do
+			LIBS="${LIBS} ${STATICLIB_OUTPUT_DIR}/${ARCH}/${LIBRARY_TO_BUILD}.a"
+		done
+		echo $LIBS
+		echo "${STATICLIB_OUTPUT_DIR_UNIVERSAL}/${LIBRARY_TO_BUILD}.a"
+		# combine the lib
+		lipo -create ${LIBS} -output "${STATICLIB_OUTPUT_DIR_UNIVERSAL}/${LIBRARY_TO_BUILD}.a"
+	fi
+done
+echo "Libraries exist as universal binaries for the following architectures: ${ARCHES[*]}"
+echo "Build products are in ${STATICLIB_OUTPUT_DIR_UNIVERSAL}."
