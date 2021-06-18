@@ -299,6 +299,7 @@
 			buildSettings = {
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = Resources/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = GRMustache;
 				WRAPPER_EXTENSION = framework;
 			};
