@@ -53,7 +53,6 @@ if [ "$REBUILD" = true ]; then
 fi
 
 for ARCH in ${ARCHES[@]}; do
-
 	export PREFIX_DIRECTORY_ARCH="${PREFIX_DIRECTORY}/$ARCH"
 	export WORKING_DIRECTORY_ARCH="${BUILDROOT_DIRECTORY}/Library-Build-Source/${ARCH}"
 	export STATICLIB_OUTPUT_DIR_ARCH="${STATICLIB_OUTPUT_DIR}/${ARCH}"
@@ -66,12 +65,14 @@ for ARCH in ${ARCHES[@]}; do
 	mkdir -p "${LICENSE_OUTPUT_DIR_ARCH}"
 
 	LIBRARIES_THAT_DONT_EXIST=()
+
 	for LIBRARY_TO_BUILD in ${LIBRARIES_TO_BUILD[@]}
 	do
 		if [ ${LIBRARY_TO_BUILD} = "libressl" ]; then
 			if [ ! -f "${STATICLIB_OUTPUT_DIR_ARCH}/libcrypto.a" ] || [ ! -f "${STATICLIB_OUTPUT_DIR_ARCH}/libssl.a" ] || [ ! -f "${STATICLIB_OUTPUT_DIR_ARCH}/libtls.a" ]; then
 			LIBRARIES_THAT_DONT_EXIST+=("${LIBRARY_TO_BUILD}")
 		fi
+
 		elif [ ! -f "${STATICLIB_OUTPUT_DIR_ARCH}/${LIBRARY_TO_BUILD}.a" ]; then
 			LIBRARIES_THAT_DONT_EXIST+=("${LIBRARY_TO_BUILD}")
 		fi
@@ -81,7 +82,6 @@ for ARCH in ${ARCHES[@]}; do
 		echo "Everything has previously been built for $ARCH..."
 		continue;
 	fi
-
 
 	deleteOldAndCreateDirectory "${PREFIX_DIRECTORY_ARCH}"
 	deleteOldAndCreateDirectory "${WORKING_DIRECTORY_ARCH}"
@@ -109,6 +109,7 @@ done
 if [ ${#ARCHES[@]} -lt "2" ]; then
 	echo "Libraries have been built for one architecture: ${ARCHES[*]}"
 	echo "Build products are in ${STATICLIB_OUTPUT_DIR_ARCH}."
+
 	exit 0
 fi
 
@@ -124,16 +125,21 @@ LIBFILE_NAMES=("${LIBRARIES_TO_BUILD[@]//libressl/libcrypto libssl libtls}")
 for LIBRARY_TO_BUILD in ${LIBFILE_NAMES[@]}
 do
 	echo $LIBRARY_TO_BUILD
+
 	if [ ! -f "${STATICLIB_OUTPUT_DIR_UNIVERSAL}/${LIBRARY_TO_BUILD}.a" ]; then
 		LIBS=""
+
 		for ARCH in ${ARCHES[@]}; do
 			LIBS="${LIBS} ${STATICLIB_OUTPUT_DIR}/${ARCH}/${LIBRARY_TO_BUILD}.a"
 		done
+
 		echo $LIBS
 		echo "${STATICLIB_OUTPUT_DIR_UNIVERSAL}/${LIBRARY_TO_BUILD}.a"
+
 		# combine the lib
 		lipo -create ${LIBS} -output "${STATICLIB_OUTPUT_DIR_UNIVERSAL}/${LIBRARY_TO_BUILD}.a"
 	fi
 done
+
 echo "Libraries exist as universal binaries for the following architectures: ${ARCHES[*]}"
 echo "Build products are in ${STATICLIB_OUTPUT_DIR_UNIVERSAL}."
