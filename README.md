@@ -1,8 +1,8 @@
-# Static libraries for Textual Encryption Kit
+# Static libraries for Textual
 
 ### How this works
 
-`source/buildLibraries.sh` automates the building of libressl, libgpg-error, libgcrypt, and libotr for the Textual IRC client.
+`source/buildLibraries.sh` automates the building of libressl, libgpg-error, libgcrypt, and libotr for the Textual IRC Client.
 By default, the build is done in `/tmp/static-library-build-results`. 
 
 Other libraries and frameworks are obtained prebuilt or built manually.
