@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: LGPL-2.1+
  *
  * Do not edit.  Generated from gpg-error.h.in for:
-                 x86_64-apple-darwin20.5.0
+                 x86_64-apple-darwin
  */
 
 /* The GnuPG project consists of many components.  Error codes are

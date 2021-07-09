@@ -17,7 +17,7 @@ case $ARCH in
 	HOST="x86_64-apple-darwin"
 	;;
 	arm64)
-	HOST="arm-apple-darwin"
+	HOST="aarch64-apple-darwin"
 	;;
 esac
 
