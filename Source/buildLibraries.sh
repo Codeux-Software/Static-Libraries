@@ -4,7 +4,7 @@ REBUILD=false
 
 export ARCHES=(x86_64 arm64)
 export BUILDJOBS=$((  $(sysctl -n hw.ncpu) + 1))
-export MACOSX_DEPLOYMENT_TARGET="10.12"
+export MACOSX_DEPLOYMENT_TARGET="10.13"
 export PLATFORM_BUILD_SDK_ROOT_LOCATION=$(xcrun -sdk macosx --show-sdk-path)
 
 export LIBRARY_LIBRESSL_VERSION="3.3.3"
