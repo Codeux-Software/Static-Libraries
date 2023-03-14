@@ -7,9 +7,9 @@ export BUILDJOBS=$((  $(sysctl -n hw.ncpu) + 1))
 export MACOSX_DEPLOYMENT_TARGET="10.13"
 export PLATFORM_BUILD_SDK_ROOT_LOCATION=$(xcrun -sdk macosx --show-sdk-path)
 
-export LIBRARY_LIBRESSL_VERSION="3.3.3"
+export LIBRARY_LIBRESSL_VERSION="3.6.2"
 export LIBRARY_GPG_ERROR_VERSION="1.42"
-export LIBRARY_GCRYPT_VERSION="1.9.3"
+export LIBRARY_GCRYPT_VERSION="1.10.1"
 export LIBRARY_OTR_VERSION="4.1.1"
 
 export LIBRARIES_TO_BUILD=(libgpg-error libgcrypt libotr libressl)
